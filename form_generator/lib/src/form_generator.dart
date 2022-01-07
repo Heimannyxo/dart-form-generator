@@ -1,10 +1,3 @@
-// You have generated a new plugin project without
-// specifying the `--platforms` flag. A plugin project supports no platforms is generated.
-// To add platforms, run `flutter create -t plugin --platforms <platforms> .` under the same
-// directory. You can also find a detailed instruction on how to add platforms in the `pubspec.yaml` at https://flutter.dev/docs/development/packages-and-plugins/developing-packages#plugin-platforms.
-
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:form_generator/src/annotations.dart';
 import 'package:form_generator/src/fields/form_field_text.dart';
@@ -27,16 +20,13 @@ class FormGenerator<TItem> {
   late Function(dynamic)? _onSubmit;
   late TItem? _initData;
   late InstanceMirror? _initDataMirror;
-  late Map<String, List<KeyValuePair>> _dropdownItems;
 
   FormGenerator() {
     _formCtrl = _FormController();
   }
 
   Widget buildForm(FormType formType,
-      {Function(dynamic)? onSubmit,
-      TItem? initData,
-      Map<String, List<KeyValuePair>>? dropdownItems}) {
+      {Function(dynamic)? onSubmit, TItem? initData}) {
     _formKey = GlobalKey<FormState>(
         debugLabel: "${formType.name} form for ${_typeMirror.simpleName}");
     _formType = formType;
@@ -44,7 +34,6 @@ class FormGenerator<TItem> {
     _initData = initData;
     _initDataMirror =
         initData != null ? formSerializable.reflect(initData) : null;
-    _dropdownItems = dropdownItems ?? HashMap();
 
     return Form(
         key: _formKey,
@@ -122,26 +111,25 @@ class FormGenerator<TItem> {
     var isReadonly = formInclude.isReadonly;
     var validator = formInclude.validator;
     var initData = _getInitData(fieldKey, typeField);
+    var dropdownItems = formInclude.dropdownData;
+    var isDropdown = dropdownItems != null;
     dynamic getHint(identifier, ifAbsent) =>
         _formCtrl.getValueHintIfAbsent(identifier, ifAbsent);
-    var isDropdown = _dropdownItems[identifier] != null;
 
     if (_formType == FormType.readonly) {
       var readData = isDropdown
-          ? _dropdownItems[identifier]!.firstWhere(
-              (pair) => pair.key == identifier,
+          ? dropdownItems.firstWhere((pair) => pair.key == identifier,
               orElse: () => const KeyValuePair("nodata", ""))
           : initData;
       return FormFieldReadonly(label: label, value: readData, typeMirror: type);
     } else if (isDropdown) {
-      final items = _dropdownItems[identifier]!;
       hintIfAbsent() =>
           _formCtrl.addValueHintFromValue<String?>(identifier, initData);
       var hint = getHint(identifier, hintIfAbsent);
       return FormFieldDropdown(
           label: label,
           initiallySelected: hint.get(),
-          items: items,
+          items: dropdownItems,
           updateValue: (newVal) => hint.set(newVal),
           validator: validator ??
               (isRequired
