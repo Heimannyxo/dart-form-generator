@@ -38,11 +38,10 @@ class FormFieldReadonly extends StatelessWidget {
 
     if (value == null) {
       return Text("- not set -", style: TextStyle(color: theme.disabledColor));
-    }
-    if (_isOneOf(typeMirror, [String, int])) {
+    } else if (value is KeyValuePair) {
+      return Text((value as KeyValuePair).value);
+    } else if (_isOneOf(typeMirror, [String, int])) {
       return Text(value.toString());
-    } else if (_isAssignableFrom(typeMirror, KeyValuePair)) {
-      return Text((value as KeyValuePair?)?.value ?? '');
     } else if (_isAssignableFrom(typeMirror, DateTime)) {
       return Text(DateFormat.yMd().add_Hms().format(value));
     } else if (_isAssignableFrom(typeMirror, bool)) {
