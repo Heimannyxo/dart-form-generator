@@ -209,10 +209,6 @@ class FormGenerator<TItem> {
       return tm1.reflectedType == t2;
     }
   }
-
-  bool _isOneOf(TypeMirror tm, Iterable<Type> types) {
-    return types.any((type) => _isAssignableFrom(tm, type));
-  }
 }
 
 enum FormType { create, edit, readonly }
