@@ -129,7 +129,7 @@ class FormGenerator<TItem> {
     if (_formType == FormType.readonly) {
       var readData = isDropdown
           ? _dropdownItems[identifier]!.firstWhere(
-              (pair) => pair.key == identifier,
+              (pair) => pair.key == initData,
               orElse: () => const KeyValuePair("nodata", ""))
           : initData;
       return FormFieldReadonly(label: label, value: readData, typeMirror: type);
