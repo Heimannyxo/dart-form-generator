@@ -14,8 +14,7 @@ class FormInclude {
       this.fieldName,
       this.isReadonly = false,
       this.isRequired = false,
-      this.validator})
-      : assert(!isRequired || validator != null);
+      this.validator});
 }
 
 enum FormIncludeType { all, create, edit, view }
