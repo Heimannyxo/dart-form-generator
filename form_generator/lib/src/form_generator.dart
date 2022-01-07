@@ -239,6 +239,7 @@ extension _FromTypeExt on FormType {
   }
 }
 
+@formSerializable
 class KeyValuePair {
   final String key;
   final String value;
